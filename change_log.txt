@@ -1,0 +1,119 @@
+===============================================================
+[2022-08-15-16:22] Park Min Jae
+
+* ddpg_stage_1.py 변경 사항
+
+Code line   | Description
+326-330     : loss 출력 깔끔하게 나오도록 변경
+547-558     : action 출력 깔끔하게 나오도록 변경
+576-580     : reward 확인용
+
+* environment_stage_1.py 변경 사항
+
+Code line   | Description
+157         : Current distance 부분 인덱스 잘못 추가된 부분 수
+
+
+===========================정====================================
+===============================================================
+[2022-08-11-16:30] Park Min Jae
+
+* ddpg_stage_1.py 변경 사항
+
+Code line   | Description
+28-62       : 사용 파라미터 한번에 관리하도록 구조 변경
+29, 31      : Stage 지정
+57-62       : Stage 별 파라미터 변경하도록 조건문 추
+330-344     : 앙상블 실험, stage, 에피소드 별 모델 저장하도록 변경
+618-621     : 앙상블 실험, stage, 에피소드 별 Reward 저장하도록 변경
+
+* environment_stage_1.py 변경 사항
+
+Code line   | Description
+40          : Stage 별 파라미터 변경하도록
+122-124     : Stage 2의 추가적인 상태(장애물과의 최소거리, 장애물의 방향)를 조건문으로 추가
+149-152     : Stage 2의 추가된 상태를 반환하기 위해 조건문 추가함
+
+===============================================================
+===============================================================
+[2022-07-28-18:56] Park Min Jae
+
+* ddpg_stage_1.py 변경 사항가
+
+Code line   | Description
+609-610     : csv 파일 경로 자동으로 설정하도록 변경(매번 사용 시 수정 안해도됨)
+
+
+* environment_stage_1.py 변경 사항
+
+Code line   | Description
+-           : -
+
+
+===============================================================
+[2022-07-22-15:22] Kwon Nam Kyu
+
+* ddpg_stage_1.py 변경 사항
+
+Code line   | Description
+41-42       : 충돌 및 성공 시 보상 변수로 설정
+377         : reward_mode 별 조건문 안에 있던 동일 코드를 조건문 밖에서 한 번만 수행하도록
+379         : 실제 immediate reward 일치시키기 위해 reward = goal_reward 로 수정
+409         : cd, n_cd 리스트 생성 명령어 수정
+441         : HER 적용하여 성공 에피소드가 추가되는지 확인하기 위한 print 문 추가
+554-568     : reward_mode 별 조건문을 하나의 명령어로 최적화
+
+
+* environment_stage_1.py 변경 사항
+
+Code line   | Description
+37          : 충돌 및 성공 시 보상 변수로 설정
+
+
+===============================================================
+[2022-07-21-16:45] Park Min Jae
+
+* ddpg_stage_1.py 변경 사항
+
+Code line   | Description
+26-37       : Reward Mode 설정할 수 있도록 Flag 작성 및 설명 추가
+              - Mode 1 : Original(Reward engineering 되어있음, immediate reward 사용)
+              - Mode 2 : New(Reward engineering 안되어있음, immediate reward 사용)
+              - Mode 3 : New(Reward engineering 안되어있음, accumulate reward 사용)
+
+348-375     : Reward Mode 관련 HER 코드 추가
+528, 537-538: Step 후 나오는 Reward 명 알기쉽도록 변경
+544-559       - new_reward : No engineering reward
+              - original_reward : engineering reward
+
+
+321         : 주석 추가
+344-345     : 실제 보상과 일치시키기 위해 reward += 500으로 수정
+353-355     : setHER 함수 주석 추가
+357-359     : HER 적용 조건문 관련 주석 추가
+362-363     : new_goal 설정 관련 주석 추가
+365         : 반복문 횟수 관련 주석 추가
+
+* environment_stage_1.py 변경 사항
+
+Code line   | Description
+212         : New reward, Original reward 모두 Return 하도록 코드 수
+
+===============================================================
+[2022-07-20-16:33] Kwon Nam Kyu
+
+* ddpg_stage_1.py 변경 사항
+
+Code line   | Description
+237         : 주석 추가
+321         : 주석 추가
+344-345     : 실제 보상과 일치시키기 위해 reward += 500으로 수정
+353-355     : setHER 함수 주석 추가
+357-359     : HER 적용 조건문 관련 주석 추가
+362-363     : new_goal 설정 관련 주석 추가
+365         : 반복문 횟수 관련 주석 추가
+
+* environment_stage_1.py 변경 사항
+
+Code line   | Description
+-           :   -
