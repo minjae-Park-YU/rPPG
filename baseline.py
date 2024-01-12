@@ -3,7 +3,6 @@ import datetime
 import os
 import pandas as pd
 import pywinusb.hid as hid
-import time
 
 experiment_time = datetime.datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
 duration = datetime.timedelta(seconds=10)
