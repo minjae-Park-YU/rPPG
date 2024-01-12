@@ -6,6 +6,7 @@ import pywinusb.hid as hid
 
 experiment_time = datetime.datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
 duration = datetime.timedelta(seconds=10)
+# 측정 시작 및 종료 지점 설정 필요 #
 
 Face_data_folder = "Data/Face/"
 PPG_data_folder = "Data/PPG/"
