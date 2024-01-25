@@ -16,8 +16,6 @@ if not cap.isOpened():
     print("Can't open Camera")
     exit()
 
-
-# 비디오 저장을 위한 설정
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 out = cv2.VideoWriter(Face_data_folder + experiment_time + '.avi', fourcc, 30.0, (640, 480))
 
@@ -50,7 +48,7 @@ def main():
         try:
             while True:
                 current_time = datetime.datetime.now()
-                if current_time - start_time > duration:  # 지정된 시간이 지나면 종료
+                if current_time - start_time > duration:
                     break
 
                 ret, frame = cap.read()
@@ -58,7 +56,7 @@ def main():
                     print("Can't read frame")
                     break
 
-                out.write(frame)  # 프레임을 비디오 파일에 기록
+                out.write(frame)   
                 cv2.imshow("Camera", frame)
 
                 if cv2.waitKey(1) == 27:
@@ -73,7 +71,7 @@ def main():
         df.to_csv(PPG_data_folder + experiment_time + '.csv')
 
     cap.release()
-    out.release()  # 비디오 라이터 해제
+    out.release()
     cv2.destroyAllWindows()
 
 
