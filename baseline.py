@@ -3,15 +3,14 @@ import datetime
 import os
 import pandas as pd
 import pywinusb.hid as hid
-import re
 
 experiment_time = datetime.datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
-duration = datetime.timedelta(seconds=10)
+duration = datetime.timedelta(seconds=30)
 
 Face_data_folder = "Data/Face/"
 PPG_data_folder = "Data/PPG/"
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 
 if not cap.isOpened():
     print("Can't open Camera")
@@ -36,19 +35,7 @@ product_num = 0x0021
 def read_handler(data):
     print("Raw data: {0}".format(data))
     Packet.append(data[0:10])
-
-    # 손가락 유무
-    # num = data[4]
-    # binaryNUM = bin(num)[2:]
-    # if len(binaryNUM) < 5:
-    #     print("No Finger")
-    # else:
-    #     PUD2_fifth_bit = binaryNUM[-5]
-    #     print("Finger In")
-    #     if PUD2_fifth_bit == 0:
-    #         print("No Finger")
-
-
+    
 
 def main():
     start_time = datetime.datetime.now()
@@ -80,18 +67,10 @@ def main():
         except KeyboardInterrupt:
             pass
 
-        # try:
-        df = pd.DataFrame(Packet)
-        # except ValueError as e:
-        #     match = re.search(r"Length of values \((\d+)\) does not match length of index \((\d+)\)", str(e))
-        #     if match:
-        #         data_length = int(match.group(1))
-        #         df = df.iloc[:data_length]
-        #         print("DataFrame Length Adjusted")
-
-        df.to_csv(PPG_data_folder + experiment_time + '.csv')
-
         device.close()
+
+        df = pd.DataFrame(Packet)
+        df.to_csv(PPG_data_folder + experiment_time + '.csv')
 
     cap.release()
     out.release()  # 비디오 라이터 해제
