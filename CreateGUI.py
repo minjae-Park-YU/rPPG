@@ -74,13 +74,11 @@ class MyApp(QWidget):
         self.raw_data_text.setTextCursor(cursor)
 
     def show_camera(self):
-        success, frame_bgr = self.capture.read()
+        success, frame = self.capture.read()
         if success:
-            frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-
-            height, width, channel = frame_rgb.shape
+            height, width, channel = frame.shape
             bytesPerLine = 3 * width
-            q_image = QImage(frame_rgb.data, width, height, bytesPerLine, QImage.Format_RGB888)
+            q_image = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888)
             pixmap = QPixmap.fromImage(q_image)
             self.camera_label.setFixedSize(640, 480)
             self.camera_label.setPixmap(pixmap)
@@ -161,3 +159,4 @@ if __name__ == "__main__":
     window = MyApp()
     window.show()
     app.exec_()
+  
