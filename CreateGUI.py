@@ -5,7 +5,7 @@ import pandas as pd
 import pywinusb.hid as hid
 from PyQt5.QtCore import QTimer, Qt, QDateTime, QDate
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QVBoxLayout, QSizePolicy,
-                             QDesktopWidget, QInputDialog, QMessageBox, QLabel, QHBoxLayout, QDateEdit, QLineEdit,
+                             QDesktopWidget, QMessageBox, QLabel, QHBoxLayout, QDateEdit, QLineEdit,
                              QComboBox)
 
 Packet = []
