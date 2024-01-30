@@ -29,6 +29,13 @@ class rPPG_GUI(QWidget):
 
         self.timer_label = QLabel('측정 중: 0 seconds  ', self)
         self.timer_label.setAlignment(Qt.AlignCenter)
+        self.timer_label.setMaximumSize(1000, 100)
+        self.timer_label.setStyleSheet("color: black;"
+                                       "background-color: #E6E6E6;"
+                                       "border-style: solid;"
+                                       "border-width: 1px;"
+                                       "border-color: #000000;"
+                                       "border-radius: 1px")
 
         self.date_edit = QDateEdit(self)
         self.date_edit.setDisplayFormat("dddd, MMMM d, yyyy")
@@ -51,6 +58,7 @@ class rPPG_GUI(QWidget):
 
         self.personal_info_layout = QVBoxLayout()
         self.personal_info_layout.addWidget(QLabel('Personal Information'))
+        self.personal_info_layout.addSpacing(15)
         self.personal_info_layout.addWidget(QLabel('Name (ex. 홍길동 -> HGD):'))
         self.personal_info_layout.addWidget(self.name_edit)
         self.personal_info_layout.addWidget(QLabel('Age:'))
@@ -61,7 +69,7 @@ class rPPG_GUI(QWidget):
         self.personal_info_layout.addWidget(self.disease_combo)
         self.personal_info_layout.addWidget(QLabel('Date:'))
         self.personal_info_layout.addWidget(self.date_edit)
-        self.personal_info_layout.addSpacing(10)
+        self.personal_info_layout.addSpacing(50)
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.start_button)
@@ -69,6 +77,7 @@ class rPPG_GUI(QWidget):
 
         timer_layout = QVBoxLayout()
         timer_layout.addWidget(self.timer_label)
+        timer_layout.addSpacing(50)
 
         main_layout = QVBoxLayout()
         main_layout.addLayout(self.personal_info_layout)
@@ -78,7 +87,7 @@ class rPPG_GUI(QWidget):
         self.setLayout(main_layout)
 
         self.setWindowTitle('rPPG Test')
-        self.setGeometry(1000, 450, 1000, 800)
+        self.setGeometry(1000, 450, 700, 800)
         self.center()
 
     def center(self):
