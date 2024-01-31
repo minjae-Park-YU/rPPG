@@ -111,7 +111,7 @@ class rPPG_GUI(QWidget):
         disease = self.disease_combo.currentText()
         date = self.date_edit.text()
 
-        info_file_path = "Data/SubjectInfo.txt"
+        info_file_path = "Data/" + name + "/SubjectInfo.txt"
 
         with open(info_file_path, 'a') as file:
             file.write(f"Name: {name}\n")
