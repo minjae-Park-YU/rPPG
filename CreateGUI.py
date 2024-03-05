@@ -6,9 +6,10 @@ import pywinusb.hid as hid
 from PyQt5.QtCore import QTimer, Qt, QDateTime, QDate
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QVBoxLayout, QSizePolicy,
                              QDesktopWidget, QMessageBox, QLabel, QHBoxLayout, QDateEdit, QLineEdit,
-                             QComboBox)
+                             QComboBox, QPlainTextEdit)
 
 Packet = []
+
 
 class rPPG_GUI(QWidget):
     def __init__(self):
@@ -21,21 +22,25 @@ class rPPG_GUI(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        info_text = ('[실험 안내]'
+                     '\n! 이름 입력 시 반드시 ex를 따라 영어로 입력해주세요 !'
+                     '\n1) ubpulse 센서에 검지 손가락을 삽입해주세요.'
+                     '\n2) 센서의 측정이 종료되면 Start 버튼을 눌러주세요.'
+                     '\n * 센서의 측정이 완료되지 않고 도중 Low Blood Perfusion 또는 Abnormal Heartbeart '
+                     '\n   문구가 나타나면 바로 Start 버튼을 눌러주세요.'
+                     '\n3) \"측정이 완료되었습니다.\" 창이 뜨기 전까지 자세를 유지해주세요.'
+                     '\n4) 화면 하단의 타이머에 얼굴이 가려지지 않도록 자세를 유지해주세요.'
+                     '\n5) 측정 시간은 약 90초입니다.')
+
+        info_display = QPlainTextEdit(self)
+        info_display.setPlainText(info_text)
+        info_display.setReadOnly(True)
+
         self.start_button = QPushButton('Start', self)
         self.start_button.clicked.connect(self.start_button_clicked)
 
         self.cancel_button = QPushButton('Cancel', self)
         self.cancel_button.clicked.connect(self.cancel_button_clicked)
-
-        self.timer_label = QLabel('측정 중: 0 seconds  ', self)
-        self.timer_label.setAlignment(Qt.AlignCenter)
-        self.timer_label.setMaximumSize(1000, 100)
-        self.timer_label.setStyleSheet("color: black;"
-                                       "background-color: #E6E6E6;"
-                                       "border-style: solid;"
-                                       "border-width: 1px;"
-                                       "border-color: #000000;"
-                                       "border-radius: 1px")
 
         self.date_edit = QDateEdit(self)
         self.date_edit.setDisplayFormat("dddd, MMMM d, yyyy")
@@ -75,19 +80,16 @@ class rPPG_GUI(QWidget):
         button_layout.addWidget(self.start_button)
         button_layout.addWidget(self.cancel_button)
 
-        timer_layout = QVBoxLayout()
-        timer_layout.addWidget(self.timer_label)
-        timer_layout.addSpacing(50)
-
         main_layout = QVBoxLayout()
         main_layout.addLayout(self.personal_info_layout)
-        main_layout.addLayout(timer_layout)
+        main_layout.addWidget(info_display)
+        # main_layout.addLayout(timer_layout)
         main_layout.addLayout(button_layout)
 
         self.setLayout(main_layout)
 
         self.setWindowTitle('rPPG Test')
-        self.setGeometry(1000, 450, 700, 800)
+        self.setGeometry(1000, 450, 1000, 900)
         self.center()
 
     def center(self):
@@ -97,21 +99,17 @@ class rPPG_GUI(QWidget):
         self.move(qr.topLeft())
 
     def start_button_clicked(self):
-        info_text = ('1) 센서를 착용해주세요.'
-                     '\n2) 센서의 HR 칸에 숫자가 시작되면 OK 버튼을 눌러주세요.'
-                     '\n3) 측정 중 Low Blood Perfusion 또는 Abnormal Heartbeart 문구가 나타나도 측정이 완료될 때까지 자세를 유지해주세요.'
-                     '\n4) 센서에서의 측적이 종료되어도 \'측정이 완료되었습니다.\' 창이 뜨기 전까지 자세를 유지해주세요.'
-                     '\n5) 측정 시간은 약 90초입니다.')
-
-        QMessageBox.information(self, '안내', info_text)
-
         name = self.name_edit.text()
         age = self.age_edit.text()
         gender = self.gender_combo.currentText()
         disease = self.disease_combo.currentText()
         date = self.date_edit.text()
 
-        info_file_path = "Data/" + name + "/SubjectInfo.txt"
+        info_folder = "Data/" + name
+        info_file_path = info_folder + "/SubjectInfo.txt"
+
+        if not os.path.exists(info_folder):
+            os.makedirs(info_folder)
 
         with open(info_file_path, 'a') as file:
             file.write(f"Name: {name}\n")
@@ -119,7 +117,6 @@ class rPPG_GUI(QWidget):
             file.write(f"Gender: {gender}\n")
             file.write(f"Disease: {disease}\n")
             file.write(f"Date: {date}\n")
-            file.write("-" * 20 + "\n")
 
         self.start_button.setEnabled(False)
         self.start_timer()
@@ -133,7 +130,7 @@ class rPPG_GUI(QWidget):
         current_time = QDateTime.currentDateTime()
         elapsed_time = self.start_time.secsTo(current_time)
         self.elapsed_time = elapsed_time
-        self.timer_label.setText(f'측정 중: {elapsed_time} seconds  ')
+        # self.timer_label.setText(f'측정 중: {elapsed_time} seconds')
         QApplication.processEvents()
 
     def date_button_clicked(self):
@@ -144,24 +141,25 @@ class rPPG_GUI(QWidget):
 
     def read_handler(self, data):
         # print("Raw data: {0}".format(data))
+
+        # 시간 확인
+        date = str(datetime.datetime.now()).split(' ')
         sliced_data = data[0:10]
+        sliced_data.append(date[1])
         Packet.append(sliced_data)
 
     def main(self, experiment_name):
         experiment_time = datetime.datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
-        duration = datetime.timedelta(seconds=20)
+        duration = datetime.timedelta(seconds=5)
 
         folder = "Data/" + experiment_name + '/'
 
         cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+        cap.set(cv2.CAP_PROP_FPS, 30)
 
         if not cap.isOpened():
             print("Can't open Camera")
             exit()
-
-        # 비디오 저장을 위한 설정
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        out = cv2.VideoWriter(folder + experiment_time + '.avi', fourcc, 30.0, (640, 480))
 
         if not os.path.exists(folder):
             os.makedirs(folder)
@@ -181,37 +179,39 @@ class rPPG_GUI(QWidget):
             start_time = datetime.datetime.now()
 
             try:
-                while True:
+                end_time = start_time + duration
+                while end_time >= datetime.datetime.now():
                     ret, frame = cap.read()
-                    current_time = datetime.datetime.now()
-                    out.write(frame)  # 프레임을 비디오 파일에 기록
-                    cv2.imshow("Camera", frame)
-
-                    if current_time - start_time >= duration:  # 지정된 시간이 지나면 종료
-                        break
+                    font = cv2.FONT_HERSHEY_SIMPLEX
 
                     if not ret:
                         print("Can't read frame")
                         break
 
-                    if cv2.waitKey(1) == 27:
+                    now = datetime.datetime.now().strftime("%H_%M_%S.%f")
+                    real_frame = cv2.putText(frame, f'{self.elapsed_time}s', (580, 460), font, 1, (255, 255, 255), 3, cv2.LINE_4)
+                    frame_time = now.split('.')[0] + '_' + now.split('.')[1]
+
+                    frame_filename = folder + f'{frame_time}.png'
+                    cv2.imwrite(frame_filename, frame)
+
+                    cv2.imshow("Camera", real_frame)
+
+                    if cv2.waitKey(1) == '27':
                         break
 
-            except KeyboardInterrupt:
-                pass
+            finally:
+                device.close()
+                cap.release()
+                cv2.destroyAllWindows()
 
-            device.close()
+                df = pd.DataFrame(Packet)
+                df.to_csv(folder + experiment_time + '.csv')
 
-            df = pd.DataFrame(Packet)
-            df.to_csv(folder + experiment_time + '.csv')
-
-        cap.release()
-        out.release()
-        cv2.destroyAllWindows()
-        self.timer.stop()
-        QMessageBox.information(self, 'Experiment Completed',
-                                '측정이 완료되었습니다.')
-        self.start_button.setEnabled(True)
+            self.timer.stop()
+            QMessageBox.information(self, 'Experiment Completed',
+                                    '측정이 완료되었습니다.')
+            self.start_button.setEnabled(True)
 
 
 if __name__ == "__main__":
